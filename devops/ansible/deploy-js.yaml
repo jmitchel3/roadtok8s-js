@@ -36,6 +36,9 @@
         executable: /bin/bash
         chdir: "{{ ansible_env.HOME }}"
         creates: "{{ ansible_env.HOME }}/.nvm/versions/18.16.0"
+    - name: Debug node version
+      debug:
+        msg : "node --version"
     - name: Set up application directory
       file:
         path: "{{ item }}"
