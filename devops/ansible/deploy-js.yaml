@@ -43,7 +43,7 @@
         ./npm install -g npm@latest
       args:
         executable: /bin/bash
-        chdir: "/.nvm/versions/node/v{{ nodejs_version }}/bin/"
+        chdir: "~/.nvm/versions/node/v{{ nodejs_version }}/bin/"
     - name: Echo Node.js Version Installed
       shell: >
         node --version
@@ -76,9 +76,10 @@
         delete: yes
     - name: Install Node.js packages
       shell: |
-        cd /opt/projects/roadtok8s/js/ && npm install
+        npm install
       args:
         executable: /bin/bash
+        chdir: "/opt/projects/roadtok8s/js/"
     - name: Configure Node.js with supervisor
       copy:
         src: ../../conf/supervisor.conf
