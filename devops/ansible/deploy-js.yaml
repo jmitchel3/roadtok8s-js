@@ -68,6 +68,7 @@
       copy:
         src: ../../conf/supervisor.conf
         dest: /etc/supervisor/conf.d/roadtok8s-js.conf
+      notify: restart nginx
     - name: Configure nginx
       copy:
         src: ../../conf/nginx.conf
