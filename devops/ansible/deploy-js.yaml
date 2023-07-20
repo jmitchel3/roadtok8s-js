@@ -8,7 +8,6 @@
         upgrade: yes
         update_cache: yes
         cache_valid_time: 3600
-
     - name: Install dependencies
       apt:
         pkg:
@@ -18,7 +17,6 @@
           - supervisor
         state: present
       tags: install
-
     - name: Install nvm and Node.js v18.16.0
       shell: |
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
@@ -27,7 +25,6 @@
         nvm install 18.16.0
       args:
         executable: /bin/bash
-      
     - name: Set up application directory
       file:
         path: "{{ item }}"
@@ -36,47 +33,36 @@
       with_items:
         - /opt/projects/roadtok8s/js/src/
         - /var/log/supervisor/roadtok8s/js/
-
-    - name: Echo playbook dir
-      debug:
-        msg: "{{ playbook_dir }}/../../src"
-
     - name: Copy Node.js app to remote server
       synchronize:
         src: '{{ playbook_dir }}/../../src/'
         dest: /opt/projects/roadtok8s/js/src/
         recursive: yes
-        # delete: yes
-    
+        delete: yes
     - name: Copy Package.json to remote server
       synchronize:
         src: '{{ playbook_dir }}/../../package.json'
         dest: /opt/projects/roadtok8s/js/package.json
         recursive: yes
-        # delete: yes
-
+        delete: yes
     - name: Install Node.js packages
       shell: |
         cd /opt/projects/roadtok8s/js/ && npm install
       args:
         executable: /bin/bash
-
     - name: Configure Node.js with supervisor
       copy:
         src: ../../conf/supervisor.conf
         dest: /etc/supervisor/conf.d/roadtok8s-js.conf
-
     - name: Configure nginx
       copy:
         src: ../../conf/nginx.conf
         dest: /etc/nginx/sites-available/roadtok8s-js
       notify: restart nginx
-  
     - name: Enable nginx site
       command: ln -s /etc/nginx/sites-available/roadtok8s-js /etc/nginx/sites-enabled
       args:
         creates: /etc/nginx/sites-enabled/roadtok8s-js
-
     - name: Remove default nginx site
       file:
         path: "{{ item }}"
@@ -85,7 +71,6 @@
       with_items:
         - /etc/nginx/sites-enabled/default
         - /etc/nginx/sites-available/default
-
     - name: Update supervisor and start Node.js app
       command: "{{ item }}"
       with_items:
