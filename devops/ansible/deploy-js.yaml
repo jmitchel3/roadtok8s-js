@@ -2,7 +2,7 @@
 - name: Deploy Node.js app
   hosts: all
   become: yes
-  variables:
+  vars:
     nodejs_version: 18.16.0
   tasks:
     - name: Update and upgrade system
