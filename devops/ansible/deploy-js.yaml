@@ -37,10 +37,11 @@
       args:
         executable: /bin/bash
         chdir: "{{ ansible_env.HOME }}"
-        creates: "{{ ansible_env.HOME }}/.nvm/versions/{{ nodejs_version }}"
+        creates: ~/.nvm/versions/node/v{{ nodejs_version }}"
     - name: Update npm
       shell: |
-        . {{ ansible_env.HOME }}/.nvm/versions/node/v{{ nodejs_version }}/bin/npm install -g npm@latest
+        cd ~/.nvm/versions/node/v{{ nodejs_version }}/bin/ && \
+        ./npm install -g npm @latest
     - name: Echo Node.js Version Installed
       shell: >
         node --version
