@@ -36,6 +36,10 @@
         executable: /bin/bash
         chdir: "{{ ansible_env.HOME }}"
         creates: "{{ ansible_env.HOME }}/.nvm/versions/18.16.0"
+    - name: Update npm
+      shell: |
+        cd ~/.nvm/versions/node/v18.16.0/lib/node_modules/npm
+        npm install -g npm@latest
     - name: Echo Node.js Version Installed
       shell: >
         . {{ ansible_env.HOME }}/.nvm/nvm.sh && node --version
