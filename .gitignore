@@ -2,6 +2,7 @@
 venv/
 devops/ansible/inventory.ini
 github_actions_key*
+.secrets
 
 # Logs
 logs
