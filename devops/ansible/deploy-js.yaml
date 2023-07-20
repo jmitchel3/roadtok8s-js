@@ -36,6 +36,7 @@
       npm:
         global: yes
         name: "{{ item }}"
+        state: latest
       with_items:
         - npm
     - name: Set up application directory
