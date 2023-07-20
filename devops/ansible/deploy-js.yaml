@@ -40,8 +40,7 @@
         creates: "{{ ansible_env.HOME }}/.nvm/versions/{{ nodejs_version }}"
     - name: Update npm
       shell: |
-        export nvm_npm=~/.nvm/versions/node/v{{ nodejs_version }}/bin/npm
-        nvm_npm install -g npm@latest
+        . {{ ansible_env.HOME }}/.nvm/versions/node/v{{ nodejs_version }}/bin/npm install -g npm@latest
     - name: Echo Node.js Version Installed
       shell: >
         node --version
