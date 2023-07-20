@@ -41,7 +41,7 @@
     - name: Update npm
       shell: |
         cd ~/.nvm/versions/node/v{{ nodejs_version }}/bin/ && \
-        ./npm install -g npm @latest
+        ./npm install -g npm@latest
     - name: Echo Node.js Version Installed
       shell: >
         node --version
