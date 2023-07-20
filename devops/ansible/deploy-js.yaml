@@ -26,7 +26,7 @@
         state: absent
     - name: Install nvm
       shell: >
-        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
       args:
         executable: /bin/bash
         chdir: "$HOME"
@@ -41,7 +41,7 @@
         creates: ~/.nvm/versions/node/v{{ nodejs_version }}"
     - name: Echo Node.js Version Installed
       shell: >
-        . ~/.bashrc && node --version
+        node --version
       args:
         executable: /bin/bash
         chdir: "{{ ansible_env.HOME }}"
