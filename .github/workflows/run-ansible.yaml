@@ -1,0 +1,53 @@
+name: Run Ansible
+on:
+  workflow_dispatch:
+
+jobs:
+  run-playbooks:
+
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup Python 3
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.8"
+    - name: Upgrade Pip & Install Ansible
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install ansible
+    - name: Implement the Private SSH Key
+      run: |
+        mkdir -p ~/.ssh/
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+    - name: Ansible Inventory File for Remote host
+      run: |
+        mkdir -p ./devops/ansible/
+        export INVENTORY_FILE=./devops/ansible/inventory.ini
+        echo "[my_host_group]" > $INVENTORY_FILE
+        echo "${{ secrets.AKAMAI_INSTANCE_IP_ADDRESS }}" >> $INVENTORY_FILE
+    - name: Create a Ansible Default Configuration File
+      run: |
+        mkdir -p ./devops/ansible/
+        cat <<EOF > ./devops/ansible/ansible.cfg
+        [defaults]
+        ansible_python_interpreter = '/usr/bin/python3'
+        ansible_ssh_private_key_file = ~/.ssh/id_rsa
+        remote_user = root
+        inventory = ./inventory.ini
+        host_key_checking = False
+        EOF
+    - name: Ping Ansible Hosts
+      working-directory: ./devops/ansible/
+      run: |
+       ansible all -m ping
+    # left for future reference
+    # - name: Run Ansible Playbooks
+    #   working-directory: ./devops/ansible/
+    #   run: |
+    #    ansible-playbook install-nginx.yaml
+    - name: Deploy Node.js via Ansible
+      working-directory: ./devops/ansible/
+      run: |
+       ansible-playbook deploy-js.yaml

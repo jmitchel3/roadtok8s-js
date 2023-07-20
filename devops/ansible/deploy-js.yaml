@@ -1,0 +1,100 @@
+---
+- name: Deploy Node.js app
+  hosts: all
+  become: yes
+  tasks:
+    - name: Update and upgrade system
+      apt:
+        upgrade: yes
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install dependencies
+      apt:
+        pkg:
+          - curl
+          - rsync
+          - nginx
+          - supervisor
+        state: present
+      tags: install
+
+    - name: Install nvm and Node.js v18.16.0
+      shell: |
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+        export NVM_DIR="$HOME/.nvm"
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+        nvm install 18.16.0
+      args:
+        executable: /bin/bash
+      
+    - name: Set up application directory
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+      with_items:
+        - /opt/projects/roadtok8s/js/src/
+        - /var/log/supervisor/roadtok8s/js/
+
+    - name: Echo playbook dir
+      debug:
+        msg: "{{ playbook_dir }}/../../src"
+
+    - name: Copy Node.js app to remote server
+      synchronize:
+        src: '{{ playbook_dir }}/../../src/'
+        dest: /opt/projects/roadtok8s/js/src/
+        recursive: yes
+        # delete: yes
+    
+    - name: Copy Package.json to remote server
+      synchronize:
+        src: '{{ playbook_dir }}/../../package.json'
+        dest: /opt/projects/roadtok8s/js/package.json
+        recursive: yes
+        # delete: yes
+
+    - name: Install Node.js packages
+      shell: |
+        cd /opt/projects/roadtok8s/js/ && npm install
+      args:
+        executable: /bin/bash
+
+    - name: Configure Node.js with supervisor
+      copy:
+        src: ../../conf/supervisor.conf
+        dest: /etc/supervisor/conf.d/roadtok8s-js.conf
+
+    - name: Configure nginx
+      copy:
+        src: ../../conf/nginx.conf
+        dest: /etc/nginx/sites-available/roadtok8s-js
+      notify: restart nginx
+  
+    - name: Enable nginx site
+      command: ln -s /etc/nginx/sites-available/roadtok8s-js /etc/nginx/sites-enabled
+      args:
+        creates: /etc/nginx/sites-enabled/roadtok8s-js
+
+    - name: Remove default nginx site
+      file:
+        path: "{{ item }}"
+        state: absent
+      notify: restart nginx
+      with_items:
+        - /etc/nginx/sites-enabled/default
+        - /etc/nginx/sites-available/default
+
+    - name: Update supervisor and start Node.js app
+      command: "{{ item }}"
+      with_items:
+        - supervisorctl reread
+        - supervisorctl update
+        - supervisorctl restart roadtok8s-js
+
+  handlers:
+    - name: restart nginx
+      systemd:
+        name: nginx
+        state: restarted
