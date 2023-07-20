@@ -33,15 +33,17 @@
         creates: "$HOME/.nvm/nvm.sh"
     - name: Install node
       shell: >
-        . {{ ansible_env.HOME }}/.nvm/nvm.sh && nvm install {{ nodejs_version }}
+        . ~/.nvm/nvm.sh && nvm install {{ nodejs_version }}
       args:
         executable: /bin/bash
         chdir: "{{ ansible_env.HOME }}"
         creates: ~/.nvm/versions/node/v{{ nodejs_version }}"
     - name: Update npm
       shell: |
-        cd ~/.nvm/versions/node/v{{ nodejs_version }}/bin/ && \
         ./npm install -g npm@latest
+      args:
+        executable: /bin/bash
+        chdir: "/.nvm/versions/node/v{{ nodejs_version }}/bin/"
     - name: Echo Node.js Version Installed
       shell: >
         node --version
