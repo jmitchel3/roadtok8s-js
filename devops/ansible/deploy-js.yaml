@@ -41,7 +41,7 @@
         creates: ~/.nvm/versions/node/v{{ nodejs_version }}"
     - name: Echo Node.js Version Installed
       shell: >
-        node --version
+        . ~/.bashrc && node --version
       args:
         executable: /bin/bash
         chdir: "{{ ansible_env.HOME }}"
