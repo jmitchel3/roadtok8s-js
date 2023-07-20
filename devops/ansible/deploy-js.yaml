@@ -36,9 +36,16 @@
         executable: /bin/bash
         chdir: "{{ ansible_env.HOME }}"
         creates: "{{ ansible_env.HOME }}/.nvm/versions/18.16.0"
-    - name: Debug node version
+    - name: Echo Node.js Version Installed
+      shell: >
+        . {{ ansible_env.HOME }}/.nvm/nvm.sh && node --version
+      args:
+        executable: /bin/bash
+        chdir: "{{ ansible_env.HOME }}"
+      register: node_version
+    - name: Show Node version
       debug:
-        msg : "node --version"
+        msg : "{{ node_version.stdout }}"
     - name: Set up application directory
       file:
         path: "{{ item }}"
