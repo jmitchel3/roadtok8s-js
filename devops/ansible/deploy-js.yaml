@@ -2,6 +2,8 @@
 - name: Deploy Node.js app
   hosts: all
   become: yes
+  variables:
+    nodejs_version: 18.16.0
   tasks:
     - name: Update and upgrade system
       apt:
@@ -31,18 +33,18 @@
         creates: "$HOME/.nvm/nvm.sh"
     - name: Install node
       shell: >
-        . {{ ansible_env.HOME }}/.nvm/nvm.sh && nvm install 18.16.0 && nvm install-latest-npm
+        . {{ ansible_env.HOME }}/.nvm/nvm.sh && nvm install {{ nodejs_version }}
       args:
         executable: /bin/bash
         chdir: "{{ ansible_env.HOME }}"
-        creates: "{{ ansible_env.HOME }}/.nvm/versions/18.16.0"
+        creates: "{{ ansible_env.HOME }}/.nvm/versions/{{ nodejs_version }}"
     - name: Update npm
       shell: |
-        cd ~/.nvm/versions/node/v18.16.0/bin/
-        ./npm install -g npm@latest
+        export nvm_npm=~/.nvm/versions/node/v{{ nodejs_version }}/bin/npm
+        nvm_npm install -g npm@latest
     - name: Echo Node.js Version Installed
       shell: >
-        . {{ ansible_env.HOME }}/.nvm/nvm.sh && node --version
+        node --version
       args:
         executable: /bin/bash
         chdir: "{{ ansible_env.HOME }}"
