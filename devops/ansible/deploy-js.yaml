@@ -31,7 +31,7 @@
         creates: "$HOME/.nvm/nvm.sh"
     - name: Install node
       shell: >
-        . {{ ansible_env.HOME }}/.nvm/nvm.sh && nvm install 18.16.0
+        . {{ ansible_env.HOME }}/.nvm/nvm.sh && nvm install-latest-npm && nvm install 18.16.0
       args:
         executable: /bin/bash
         chdir: "{{ ansible_env.HOME }}"
