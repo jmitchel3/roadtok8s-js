@@ -17,6 +17,11 @@
           - supervisor
         state: present
       tags: install
+    - name: remove system nodejs
+      apt:
+        pkg: 
+          - nodejs
+        state: absent
     - name: Install nvm and Node.js v18.16.0
       shell: |
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
