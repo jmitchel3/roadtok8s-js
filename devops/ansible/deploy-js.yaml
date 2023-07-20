@@ -3,7 +3,7 @@
   hosts: all
   become: yes
   vars:
-    nodejs_version: 18.16.0
+    nodejs_v: 18
   tasks:
     - name: Update and upgrade system
       apt:
@@ -23,9 +23,9 @@
       apt_key:
         url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
         state: present
-    - name: "Add nodejs 18.x ppa for apt repo"
+    - name: "Add nodejs {{ nodejs_v }}.x ppa for apt repo"
       apt_repository:
-        repo: deb https://deb.nodesource.com/node_18.x bionic main
+        repo: deb https://deb.nodesource.com/node_{{ nodejs_v }}.x bionic main
         update_cache: yes
     - name: "Install nodejs"
       apt:
