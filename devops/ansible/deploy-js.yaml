@@ -22,19 +22,20 @@
         pkg: 
           - nodejs
         state: absent
-    - name: Install nvm and Node.js v18.16.0
-      command: |
+    - name: Install nvm
+      shell: >
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
-        export NVM_DIR="$HOME/.nvm"
-        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-        [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-        echo "NVM_DIR=$NVM_DIR" >> ~/.bashrc
-        source ~/.bashrc
       args:
         executable: /bin/bash
-    - name: Use nvm to install Node.js v18.16.0
-      shell: |
-        nvm install 18.16.0
+        chdir: "$HOME"
+        creates: "$HOME/.nvm/nvm.sh"
+    - name: Install node
+      shell: >
+        . {{ ansible_env.HOME }}/.nvm/nvm.sh && nvm install 18.16.0
+      args:
+        executable: /bin/bash
+        chdir: "{{ ansible_env.HOME }}"
+        creates: "{{ ansible_env.HOME }}/.nvm/versions/18.16.0"
     - name: Set up application directory
       file:
         path: "{{ item }}"
