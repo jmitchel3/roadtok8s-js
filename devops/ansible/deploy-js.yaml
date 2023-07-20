@@ -28,9 +28,11 @@
         export NVM_DIR="$HOME/.nvm"
         [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
         [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-        nvm install 18.16.0
       args:
         executable: /bin/bash
+    - name: Use nvm to install Node.js v18.16.0
+      shell: |
+        nvm install 18.16.0
     - name: Set up application directory
       file:
         path: "{{ item }}"
