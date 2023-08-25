@@ -1,0 +1,12 @@
+services:
+  web:
+    image: codingforentrepreneurs/rk8s-js:${TAG:-latest}
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      tags:
+        - "codingforentrepreneurs/rk8s-js:${TAG:-latest}"
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
